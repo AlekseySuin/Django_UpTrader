@@ -1,0 +1,16 @@
+{% for node in nodes %}
+    <li class="{% if node.children %}has-children{% endif %} {% if node.is_active %}active{% endif %}">
+        {% if node.children %}
+            <a href="?expanded={{ node.item.id }}{% for id in request.GET.expanded %}{% if id != node.item.id %}&expanded={{ id }}{% endif %}{% endfor %}">
+                {{ node.item.name }} {% if node.is_expanded %}-{% else %}+{% endif %}
+            </a>
+            {% if node.is_expanded %}
+                <ul>
+                    {% include "menu/menu_level.html" with nodes=node.children %}
+                </ul>
+            {% endif %}
+        {% else %}
+            <a href="{{ node.item.get_url }}">{{ node.item.name }}</a>
+        {% endif %}
+    </li>
+{% endfor %}

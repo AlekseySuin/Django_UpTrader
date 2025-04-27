@@ -1,15 +1,17 @@
 <ul class="menu">
-    {% for item in menu_tree %}
-        <li class="menu-item {% if item.is_active %}active{% endif %} {% if item.is_expanded %}expanded{% endif %}">
-            <a href="{{ item.get_url }}">{{ item.name }}</a>
-            {% if item.children %}
-                <ul class="submenu">
-                    {% for child in item.children %}
-                        <li class="submenu-item {% if child.is_active %}active{% endif %}">
-                            <a href="{{ child.get_url }}">{{ child.name }}</a>
-                        </li>
-                    {% endfor %}
-                </ul>
+    {% for node in menu_tree %}
+        <li class="menu-item {% if node.is_active %}active{% endif %}">
+            {% if node.children %}
+                <a href="?expanded={{ node.item.id }}{% for id in request.GET.expanded %}{% if id != node.item.id %}&expanded={{ id }}{% endif %}{% endfor %}">
+                    {{ node.item.name }} {% if node.is_expanded %}-{% else %}+{% endif %}
+                </a>
+                {% if node.is_expanded %}
+                    <ul class="submenu">
+                        {% include "menu/menu_level.html" with nodes=node.children %}
+                    </ul>
+                {% endif %}
+            {% else %}
+                <a href="{{ node.item.get_url }}">{{ node.item.name }}</a>
             {% endif %}
         </li>
     {% endfor %}
